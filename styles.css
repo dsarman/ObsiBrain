@@ -1,4 +1,12 @@
-/* Sets all the text color to red! */
-body {
-    color: red;
+.sb-input {
+  background: var(--base-h);
+  color: var(--text-muted);
+  border-radius: 8px;
+  border-width: 0;
+  padding: 8px;
 }
+
+.sb-table td:first-child {
+  white-space: nowrap;
+}
+

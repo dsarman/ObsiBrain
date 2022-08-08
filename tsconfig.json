@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "jsx": "react",
+    "strict": true,
+    "baseUrl": "./src/",
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
@@ -15,7 +17,8 @@
       "ES5",
       "ES6",
       "ES7"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "**/*.ts"
