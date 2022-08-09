@@ -43,9 +43,6 @@ class TasksLivePreview implements PluginValue {
     task.toggle().then((task) => {
       const toggledString = task.line;
 
-      console.log(toggledString);
-      console.log(line);
-
       const transaction = state.update({
         changes: {
           from: line.from,
