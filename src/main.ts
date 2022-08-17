@@ -1,14 +1,7 @@
-import {
-  App,
-  Events,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-  Vault,
-} from 'obsidian';
-import { addPropertiesTable } from 'features/properties/propertiesTable';
+import { App, Plugin, PluginSettingTab, Setting, Vault } from 'obsidian';
 import { newTasksLivePreview } from 'features/tasks/TasksLivePreview';
 import { Task } from 'features/tasks/Task';
+import { graphCodeBlockPostProcessor } from './features/graph/graphCodeBlockPostProcessor';
 
 // Remember to rename these classes and interfaces!
 
@@ -34,15 +27,11 @@ export default class MyPlugin extends Plugin {
     // eslint-disable-next-line no-use-before-define
     this.addSettingTab(new SampleSettingTab(this.app, this));
 
-    /*
     this.registerMarkdownCodeBlockProcessor(
-      'sb-props',
-      async (source, el, ctx) => {
-        const container = el.createEl('div', { cls: 'sb-table' });
-        addPropertiesTable(this.app, source, container, this, ctx.sourcePath);
-      }
+      'dataviewjsgraph',
+      graphCodeBlockPostProcessor
     );
-    */
+
     this.registerEditorExtension(newTasksLivePreview(this.app.vault));
   }
 
