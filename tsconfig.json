@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "strict": true,
     "baseUrl": "./src/",
     "inlineSourceMap": true,
