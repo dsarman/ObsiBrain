@@ -20,37 +20,43 @@ const column = css({
   justifyContent: 'space-evenly',
 });
 
+const Arrow = ({
+  parentId,
+  childId,
+}: {
+  parentId: string;
+  childId: string;
+}) => <Xarrow start={parentId} end={childId} path="straight" />;
+
 export const Graph = ({ graph: { areas, goals, keyResults } }: Props) => {
   return (
     <div css={container}>
       <div css={column}>
         {areas.map((area) => (
-          <>
-            <AreaNode key={area.id} node={area} />
+          <div key={area.id}>
+            <AreaNode node={area} />
             {area.children.map((childId) => (
-              <Xarrow
+              <Arrow
                 key={`${area.id}-${childId}`}
-                start={area.id}
-                end={childId}
-                curveness={0}
+                parentId={area.id}
+                childId={childId}
               />
             ))}
-          </>
+          </div>
         ))}
       </div>
       <div css={column}>
         {goals.map((goal) => (
-          <>
-            <GoalNode key={goal.id} node={goal} />
+          <div key={goal.id}>
+            <GoalNode node={goal} />
             {goal.children.map((childId) => (
-              <Xarrow
+              <Arrow
                 key={`${goal.id}-${childId}`}
-                start={goal.id}
-                end={childId}
-                path="straight"
+                parentId={goal.id}
+                childId={childId}
               />
             ))}
-          </>
+          </div>
         ))}
       </div>
       <div css={column}>
