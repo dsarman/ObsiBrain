@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { App, MarkdownPostProcessorContext } from 'obsidian';
-import { createRoot } from 'react-dom/client';
 import { DataArray, DataviewApi, getAPI } from 'obsidian-dataview';
 import { AreaPage } from './cardTypes';
 import { sb } from '../../common/loggingUtils';

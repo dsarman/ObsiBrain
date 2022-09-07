@@ -1,17 +1,12 @@
-import { MarkdownPostProcessorContext } from 'obsidian';
-import { DataArray, DataviewApi, getAPI } from 'obsidian-dataview';
-import { sb } from '../../common/loggingUtils';
+import { MarkdownRenderChild, MarkdownView } from 'obsidian';
+import { createRoot, Root } from 'react-dom/client';
+import { DataArray, DataviewApi } from 'obsidian-dataview';
+import { IGraph, INode, ITask } from '../features/graph/react/graphTypes';
+import { isComplete, isFocused, processField } from './dataviewUtils';
+import { DataViewPage } from './types';
+import { sb } from './loggingUtils';
 import * as React from 'react';
-import { DataViewPage } from '../../common/types';
-import { IGraph, INode, ITask } from './react/graphTypes';
-import {
-  isComplete,
-  isFocused,
-  processField,
-} from '../../common/dataviewUtils';
-import { createRoot } from 'react-dom/client';
-import { Graph } from './react/Graph';
-import { ReactRenderChild } from '../../common/reactUtils';
+import { Graph } from '../features/graph/react/Graph';
 
 const nodeComparator = (a: INode<any>, b: INode<any>) => b.order - a.order;
 
@@ -136,29 +131,53 @@ const getData = (api: DataviewApi, filePath: string): IGraph | null => {
   };
 };
 
-export const graphCodeBlockPostProcessor = (
-  source: string,
-  el: HTMLElement,
-  ctx: MarkdownPostProcessorContext
-): Promise<any> | void => {
-  const api = getAPI(app);
-  if (!api) {
-    console.error(sb('Could not load dataview api'));
-    return;
+export class ReactRenderChild extends MarkdownRenderChild {
+  private root: Root | null = null;
+  private readonly api: DataviewApi;
+  private readonly sourcePath: string;
+  private graph: IGraph | null = null;
+
+  constructor(containerEl: HTMLElement, api: DataviewApi, sourcePath: string) {
+    super(containerEl);
+    this.api = api;
+    this.sourcePath = sourcePath;
   }
 
-  const data = getData(api, ctx.sourcePath);
-  if (!data) {
-    console.error(sb('Could not load data from dataview'));
-    return;
+  render(refreshData = true) {
+    if (refreshData || !this.graph) {
+      this.graph = getData(this.api, this.sourcePath);
+    }
+    if (!this.graph) {
+      console.error(sb('Could not load data from dataview'));
+      return;
+    }
+    if (!this.root) {
+      this.root = createRoot(this.containerEl);
+    }
+
+    this.root.render(
+      <React.StrictMode>
+        <Graph graph={this.graph} />
+      </React.StrictMode>
+    );
   }
 
-  const root = createRoot(el);
-  root.render(
-    <React.StrictMode>
-      <Graph graph={data} />
-    </React.StrictMode>
-  );
+  onload() {
+    this.render();
+    this.registerEvent(
+      this.api.app.workspace.on('resize', () => {
+        this.render(false);
+      })
+    );
+    this.registerEvent(
+      this.api.app.workspace.on('dataview:refresh-views', () => this.render())
+    );
+  }
 
-  ctx.addChild(new ReactRenderChild(el, root));
-};
+  unload() {
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
+  }
+}

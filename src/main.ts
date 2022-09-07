@@ -2,7 +2,6 @@ import { App, Plugin, PluginSettingTab, Setting, Vault } from 'obsidian';
 import { newTasksLivePreview } from 'features/tasks/TasksLivePreview';
 import { Task } from 'features/tasks/Task';
 import { graphCodeBlockPostProcessor } from './features/graph/graphCodeBlockPostProcessor';
-import { cardsCodeBlockPostProcessor } from './features/cards/cardsCodeBlockPostProcessor';
 
 // Remember to rename these classes and interfaces!
 
@@ -33,10 +32,12 @@ export default class MyPlugin extends Plugin {
       graphCodeBlockPostProcessor
     );
 
+    /*
     this.registerMarkdownCodeBlockProcessor(
       'sb-cards',
       cardsCodeBlockPostProcessor(this.app)
     );
+     */
 
     this.registerEditorExtension(newTasksLivePreview(this.app.vault));
   }
