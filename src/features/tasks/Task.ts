@@ -12,8 +12,12 @@ type PositionInfo<T> = {
   end: number;
   value: T | null;
 } | null;
-type RecurrenceType = "day" | "month";
-interface RecurrenceValue {type: RecurrenceType, number: number, isStrict: boolean}
+type RecurrenceType = 'day' | 'month';
+interface RecurrenceValue {
+  type: RecurrenceType;
+  number: number;
+  isStrict: boolean;
+}
 type DateField = PositionInfo<DateTime>;
 type Recurrence = PositionInfo<RecurrenceValue>;
 interface TaskProps {
@@ -121,45 +125,55 @@ export class Task {
     };
   }
 
-  private static parseRecurrence(
-    identifier: string,
-    line: string
-  ): Recurrence {
+  private static parseRecurrence(identifier: string, line: string): Recurrence {
     const recurrenceField = this.parseField(identifier, line);
     if (!recurrenceField) return null;
 
-    if (recurrenceField.value?.startsWith("every month")) {
-      return {...recurrenceField, value: {type: "month", number: 1}}
+    const isStrict = recurrenceField.value?.endsWith('!') ?? false;
+
+    if (recurrenceField.value?.startsWith('every month')) {
+      return {
+        ...recurrenceField,
+        value: { type: 'month', number: 1, isStrict },
+      };
     }
     if (recurrenceField.value?.startsWith('every day')) {
-      return { ...recurrenceField, value: {type: "day", number: 1} };
+      return {
+        ...recurrenceField,
+        value: { type: 'day', number: 1, isStrict },
+      };
     }
 
-    let valueType: RecurrenceType = "day"
+    let valueType: RecurrenceType = 'day';
     let numberMatch = line.match(DAY_RECURRENCE_PATTERN);
     if (!numberMatch) {
-      numberMatch = line.match(MONTH_RECURRENCE_PATTERN)
-      valueType = "month"
+      numberMatch = line.match(MONTH_RECURRENCE_PATTERN);
+      valueType = 'month';
     }
-    if (!numberMatch) return null
+    if (!numberMatch) return null;
 
-    const isStrict = recurrenceField.value?.endsWith("!") ?? false
-
-    return { ...recurrenceField, value: {type: valueType, number: parseInt(numberMatch[1]), isStrict} };
+    return {
+      ...recurrenceField,
+      value: { type: valueType, number: parseInt(numberMatch[1]), isStrict },
+    };
   }
 
   // ---- Recurrence manipulation methods ----
 
   private getNextDueDate(now = DateTime.now()): DateTime | null {
     if (!this.recurrence || !this.recurrence.value) return null;
-    const startDate = this.recurrence.value.isStrict ? this.due?.value : now
-    if (!startDate) return null
+    const startDate = this.recurrence.value.isStrict ? this.due?.value : now;
+    if (!startDate) return null;
 
     switch (this.recurrence.value.type) {
-      case "day":
-        return startDate.plus(Duration.fromObject({ days: this.recurrence.value.number }));
+      case 'day':
+        return startDate.plus(
+          Duration.fromObject({ days: this.recurrence.value.number })
+        );
       case 'month':
-        return startDate.plus(Duration.fromObject({ months: this.recurrence.value.number }));
+        return startDate.plus(
+          Duration.fromObject({ months: this.recurrence.value.number })
+        );
     }
   }
 
@@ -183,7 +197,6 @@ export class Task {
   }
 
   public async toggle(): Promise<Task> {
-
     if (!this.checked && this.recurrence) {
       const nextDueDate = this.getNextDueDate();
       const existingProps = this.toProps();

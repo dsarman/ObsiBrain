@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export interface INode<T = string> {
   id: string;
   name: string;
@@ -7,7 +9,7 @@ export interface INode<T = string> {
 }
 
 export interface ITask {
-  scheduled: boolean;
+  scheduled?: DateTime;
   completed: boolean;
   isToday: boolean;
 }

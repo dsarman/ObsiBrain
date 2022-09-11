@@ -1,6 +1,6 @@
 import { AreaPage, GoalPage, Page } from '../features/cards/CardTypes';
 import { faker } from '@faker-js/faker';
-import { capitalize } from 'lodash';
+import { capitalize, toInteger } from 'lodash';
 import { INode } from '../features/graph/react/graphTypes';
 
 // Cards
@@ -30,7 +30,7 @@ export const keyResultNodeFake = (): INode => ({
   name: `💎 ${capitalize(faker.hacker.phrase())}`,
   filePath: faker.system.filePath(),
   children: [],
-  parents: [],
+  order: toInteger(faker.random.numeric()),
 });
 
 export const goalNodeFake = (): INode => ({
@@ -38,7 +38,7 @@ export const goalNodeFake = (): INode => ({
   name: `🚀 ${capitalize(faker.hacker.verb())}`,
   filePath: faker.system.filePath(),
   children: [],
-  parents: [],
+  order: toInteger(faker.random.numeric()),
 });
 
 export const areaNodeFake = (): INode => ({
@@ -46,5 +46,5 @@ export const areaNodeFake = (): INode => ({
   name: `${capitalize(faker.word.adverb())} ${faker.word.adjective()}`,
   filePath: faker.system.filePath(),
   children: [],
-  parents: [],
+  order: toInteger(faker.random.numeric()),
 });

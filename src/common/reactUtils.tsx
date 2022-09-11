@@ -7,6 +7,7 @@ import { DataViewPage } from './types';
 import { sb } from './loggingUtils';
 import * as React from 'react';
 import { Graph } from '../features/graph/react/Graph';
+import { notNull } from './utilities';
 
 const nodeComparator = (a: INode<any>, b: INode<any>) => b.order - a.order;
 
@@ -81,17 +82,20 @@ const getData = (api: DataviewApi, filePath: string): IGraph | null => {
         if (api.value.isLink(scheduled)) {
           const scheduledPage = api.page(scheduled.path) as DataViewPage;
           const scheduledOn = scheduledPage?.file?.day;
-          const isToday = scheduledOn && scheduledOn <= noteFile.file.day;
+          const isToday =
+            !!scheduledOn &&
+            !!noteFile.file.day &&
+            scheduledOn <= noteFile.file.day;
           isKeyResultToday = isToday || isKeyResultToday;
           return {
             completed: task.completed,
-            scheduled,
+            scheduled: scheduledOn,
             isToday,
           };
         }
         return null;
       })
-      .filter((value: unknown) => !!value);
+      .filter(notNull);
 
     data.keyResults.push({
       id,
