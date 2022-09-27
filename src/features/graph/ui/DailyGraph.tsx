@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { IKeyResultNode, ITask, WithGraph } from 'features/graph/graphTypes';
+import { IKeyResultNode, WithGraph } from 'features/graph/graphTypes';
 import { useAtom } from 'jotai';
 import { useXarrow } from 'react-xarrows';
 import { onlyTodayAtom } from 'common/state';
@@ -14,6 +14,7 @@ const container = css({
   marginTop: 10,
   display: 'flex',
   flexDirection: 'row',
+  justifyContent: 'space-around',
 });
 
 const column = css({
