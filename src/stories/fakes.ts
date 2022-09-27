@@ -1,7 +1,7 @@
 import { AreaPage, GoalPage, Page } from '../features/cards/CardTypes';
 import { faker } from '@faker-js/faker';
 import { capitalize, toInteger } from 'lodash';
-import { INode } from '../features/graph/react/graphTypes';
+import { INode } from 'features/graph/graphTypes';
 
 // Cards
 

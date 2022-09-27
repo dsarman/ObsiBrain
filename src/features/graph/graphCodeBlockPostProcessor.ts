@@ -1,7 +1,7 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
 import { getAPI } from 'obsidian-dataview';
-import { sb } from '../../common/loggingUtils';
-import { ReactRenderChild } from '../../common/reactUtils';
+import { sb } from 'common/loggingUtils';
+import { ReactRenderChild } from 'features/graph/ui/ReactRenderChild';
 
 export const graphCodeBlockPostProcessor = (
   source: string,
@@ -14,5 +14,5 @@ export const graphCodeBlockPostProcessor = (
     return;
   }
 
-  ctx.addChild(new ReactRenderChild(el, api, ctx.sourcePath));
+  ctx.addChild(new ReactRenderChild(el, api, ctx));
 };

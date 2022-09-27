@@ -2,11 +2,11 @@ import * as React from 'react';
 import { App, MarkdownPostProcessorContext } from 'obsidian';
 import { DataArray, DataviewApi, getAPI } from 'obsidian-dataview';
 import { AreaPage } from './cardTypes';
-import { sb } from '../../common/loggingUtils';
-import { DataViewPage } from '../../common/types';
-import { isComplete, isFocused } from '../../common/dataviewUtils';
+import { sb } from 'common/loggingUtils';
+import { DataViewPage } from 'common/types';
+import { isComplete, isFocused } from 'common/dataviewUtils';
 import { AreaCard } from './AreaCard';
-import { ReactRenderChild } from '../../common/reactUtils';
+import { ReactRenderChild } from 'src/features/graph/ui/ReactRenderChild';
 
 const getData = (api: DataviewApi, filePath: string): AreaPage[] => {
   const noteFile = api.page(filePath) as DataViewPage;

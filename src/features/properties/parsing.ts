@@ -1,5 +1,6 @@
 import { Property } from 'common/types';
-import { NEWLINE, PROPERTY_SEPARATOR } from 'features/properties/constants';
+import { PROPERTY_SEPARATOR } from 'features/properties/constants';
+import { NEWLINE } from 'common/utilities';
 
 const parseBoolean = (line: string): boolean | null => {
   switch (line) {

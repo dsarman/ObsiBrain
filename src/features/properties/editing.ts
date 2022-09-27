@@ -1,7 +1,8 @@
 import { Property } from 'common/types';
 import { TFile, Vault } from 'obsidian';
-import { NEWLINE, PROPERTY_SEPARATOR } from 'features/properties/constants';
+import { PROPERTY_SEPARATOR } from 'features/properties/constants';
 import { parseLine } from 'features/properties/parsing';
+import { NEWLINE } from 'common/utilities';
 
 const renderProperty = (property: Property | null): string | null =>
   property ? `${property.name}${PROPERTY_SEPARATOR} ${property.value}` : null;
