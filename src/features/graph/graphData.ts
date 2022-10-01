@@ -58,9 +58,9 @@ const fetchData = (api: DataviewApi, filePath: string) => {
     return null;
   }
 
-  const currentQ = noteDay.toFormat("kkkk-'Q'q");
-  const currentMonth = noteDay.toFormat(MONTH_FORMAT);
-  const currentWeek = noteDay.toFormat(WEEK_FORMAT);
+  const currentQ = noteDay.startOf('week').toFormat("kkkk-'Q'q");
+  const currentMonth = noteDay.startOf('week').toFormat(MONTH_FORMAT);
+  const currentWeek = noteDay.startOf('week').toFormat(WEEK_FORMAT);
 
   const areas = (
     api.pages(
@@ -77,27 +77,30 @@ const fetchData = (api: DataviewApi, filePath: string) => {
     goalPaths = goals.map((goal) => goal.file.path).array();
   }
 
-  const keyResults = (
-    api.pages('"💿 Databases/💎 Key Results"') as DataArray<DataViewPage>
-  ).filter((keyResult) => {
-    switch (noteType) {
-      case 'daily':
-        return isFocused(keyResult, currentWeek, api) && !isComplete(keyResult);
-      case 'weekly':
-        if (api.value.isLink(keyResult.Goal)) {
-          return (
-            !isComplete(keyResult) && goalPaths.includes(keyResult.Goal.path)
-          );
-        } else {
-          return false;
-        }
-
-      case 'monthly':
-        return !isComplete(keyResult);
-      default:
-        return false;
-    }
-  });
+  const keyResults =
+    noteType !== 'monthly'
+      ? (
+          api.pages('"💿 Databases/💎 Key Results"') as DataArray<DataViewPage>
+        ).filter((keyResult) => {
+          switch (noteType) {
+            case 'daily':
+              return (
+                isFocused(keyResult, currentWeek, api) && !isComplete(keyResult)
+              );
+            case 'weekly':
+              if (api.value.isLink(keyResult.Goal)) {
+                return (
+                  !isComplete(keyResult) &&
+                  goalPaths.includes(keyResult.Goal.path)
+                );
+              } else {
+                return false;
+              }
+            default:
+              return false;
+          }
+        })
+      : [];
 
   return { areas, goals, keyResults, noteDay, noteType };
 };
@@ -225,6 +228,7 @@ export const filterGraphByKeyResult = (
     goals: [],
     keyResults: [],
     type: graph.type,
+    date: graph.date,
   };
   const includedKeyResult: string[] = [];
 
