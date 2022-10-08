@@ -3,7 +3,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "strict": true,
-    "baseUrl": "./src/",
+    "baseUrl": "src/",
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",

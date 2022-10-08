@@ -31,6 +31,7 @@ const wrapper = css({
   position: 'relative',
   width: 'fit-content',
   height: 'fit-content',
+  margin: 12,
 });
 
 const flex = css({

@@ -31,6 +31,10 @@ const column = css({
   flexDirection: 'column',
 });
 
+const secondColumn = css({
+  flex: 2,
+});
+
 const button = css({
   position: 'absolute',
   top: 0,
@@ -67,34 +71,36 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
         {graph.areas.map((area) => (
           <div key={area.id} css={row}>
             <AreaNode node={area} />
-            {area.children.map((goal) => {
-              return (
-                <div key={goal.id} css={secondRow}>
-                  <Arrow parentId={area.id} childId={goal.id} />
-                  {goal.displayParentId === area.id && (
-                    <>
-                      <GoalNode node={goal} />
-                      <div css={column}>
-                        {goal.children.map((keyResult) => {
-                          return (
-                            <div key={keyResult.id}>
-                              <KeyResultNode
-                                node={keyResult}
-                                noteType={graph.type}
-                              />
-                              <Arrow
-                                parentId={goal.id}
-                                childId={keyResult.id}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+            <div css={secondColumn}>
+              {area.children.map((goal) => {
+                return (
+                  <div key={goal.id} css={secondRow}>
+                    <Arrow parentId={area.id} childId={goal.id} />
+                    {goal.displayParentId === area.id && (
+                      <>
+                        <GoalNode node={goal} />
+                        <div css={column}>
+                          {goal.children.map((keyResult) => {
+                            return (
+                              <div key={keyResult.id}>
+                                <KeyResultNode
+                                  node={keyResult}
+                                  noteType={graph.type}
+                                />
+                                <Arrow
+                                  parentId={goal.id}
+                                  childId={keyResult.id}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ))}
       </div>
