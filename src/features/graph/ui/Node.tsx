@@ -5,10 +5,8 @@ import { ObsidianLink } from 'features/cards/ObsidianLink';
 import { INode, ITask, NoteDateKind } from 'features/graph/graphTypes';
 import { HiOutlineStar, HiStar } from 'react-icons/hi';
 import { useAtomValue } from 'jotai';
-import { dvApiAtom, graphAtom, markdownContextAtom } from 'common/state';
-import { changeTaskDate, toggleFocus, WEEK_FORMAT } from 'common/dataviewUtils';
-import { DateTime } from 'luxon';
-import { isFocused as isPageFocused } from 'common/dataviewUtils';
+import { dvApiAtom } from 'common/state';
+import { useFocused } from 'features/graph/ui/useFocused';
 
 interface Props<T = INode<unknown> | ITask> {
   node: INode<T>;
@@ -113,91 +111,9 @@ const focusedBorder: React.CSSProperties = {
   borderStyle: 'solid',
 };
 
-export const KeyResultNode = (args: Props<ITask>) => {
-  const graph = useAtomValue(graphAtom);
-  const graphDate = graph?.date ?? null;
+export const FocusableNode = (args: Props) => {
   const dvApi = useAtomValue(dvApiAtom);
-  const markdownContext = useAtomValue(markdownContextAtom);
-  const [isFocused, setIsFocused] = React.useState<
-    boolean | ITask | undefined
-  >();
-
-  React.useEffect(() => {
-    switch (args.noteType) {
-      case 'daily':
-        setIsFocused(args.node.children.find((task) => task.isToday));
-        return;
-      case 'weekly': {
-        if (!markdownContext || !dvApi) return;
-        const namedMatch = markdownContext.sourcePath.match(/.+\/(.+).md$/);
-        if (namedMatch)
-          setIsFocused(isPageFocused(args.node.filePath, namedMatch[1], dvApi));
-        return;
-      }
-    }
-  }, [
-    args.node.children,
-    args.node.filePath,
-    args.noteType,
-    dvApi,
-    markdownContext,
-  ]);
-
-  const onStarClick = React.useCallback(() => {
-    if (!dvApi || !graphDate) return;
-    switch (args.noteType) {
-      case 'daily':
-        if (!isFocused || typeof isFocused === 'boolean') return;
-        changeTaskDate(isFocused.data, null, 'due', dvApi.app.vault);
-        return;
-      case 'weekly':
-        setIsFocused((prevState) => !prevState);
-        toggleFocus(
-          dvApi,
-          args.node.filePath,
-          !!isFocused,
-          graphDate.toFormat(WEEK_FORMAT)
-        );
-        return;
-    }
-  }, [args.node.filePath, args.noteType, dvApi, graphDate, isFocused]);
-
-  const onOutlineStarClick = React.useCallback(() => {
-    if (!dvApi || !graphDate) return;
-    switch (args.noteType) {
-      case 'daily': {
-        const firstIncomplete = args.node.children.find(
-          (task) => !task.completed && !task.isToday
-        );
-        if (firstIncomplete) {
-          changeTaskDate(
-            firstIncomplete.data,
-            DateTime.now(),
-            'due',
-            dvApi.app.vault
-          );
-        }
-        return;
-      }
-      case 'weekly':
-        setIsFocused((prevState) => !prevState);
-        toggleFocus(
-          dvApi,
-          args.node.filePath,
-          !!isFocused,
-          graphDate.toFormat(WEEK_FORMAT)
-        );
-        return;
-    }
-  }, [
-    args.node.children,
-    args.node.filePath,
-    args.noteType,
-    dvApi,
-    graphDate,
-    isFocused,
-  ]);
-
+  const { isFocused, onOutlineStarClick, onStarClick } = useFocused(args.node);
   if (!dvApi) return null;
 
   return (

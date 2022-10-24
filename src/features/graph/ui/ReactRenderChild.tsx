@@ -26,6 +26,7 @@ export class ReactRenderChild extends MarkdownRenderChild {
   render(refreshData = true) {
     if (refreshData || !this.graph) {
       this.graph = getData(this.api, this.context.sourcePath);
+      console.log(this.graph);
     }
     if (!this.graph) {
       console.error(sb('Could not load data from dataview'));

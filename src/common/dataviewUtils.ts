@@ -144,4 +144,4 @@ export const toggleFocus = async (
   await dv.app.vault.modify(file, modifiedContent);
 };
 export const WEEK_FORMAT = "kkkk-'W'W";
-export const MONTH_FORMAT = 'kkkk-LL';
+export const MONTH_FORMAT = 'yyyy-MM';

@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { graphAtom } from 'common/state';
 import { DailyGraph } from 'features/graph/ui/DailyGraph';
 import { WeeklyGraph } from 'features/graph/ui/WeeklyGraph';
+import { MonthlyGraph } from 'features/graph/ui/MonthlyGraph';
 
 export const Graph = () => {
   const graphData = useAtomValue(graphAtom);
@@ -13,6 +14,8 @@ export const Graph = () => {
       return <DailyGraph graph={graphData} />;
     case 'weekly':
       return <WeeklyGraph graph={graphData} />;
+    case 'monthly':
+      return <MonthlyGraph graph={graphData} />;
     default:
       return <p>⛔️ Not implemented yet ⛔️</p>;
   }

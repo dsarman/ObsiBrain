@@ -1,7 +1,7 @@
 import {
   AreaNode as AreaNodeComponent,
   GoalNode as GoalNodeComponent,
-  KeyResultNode as KeyResultNodeComponent,
+  FocusableNode as KeyResultNodeComponent,
   Node,
 } from 'src/features/graph/ui/Node';
 import { ComponentMeta } from '@storybook/react';

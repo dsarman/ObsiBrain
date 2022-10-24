@@ -6,7 +6,7 @@ import { onlyTodayAtom } from 'common/state';
 import { filterGraphByKeyResult } from 'features/graph/graphData';
 import { css } from '@emotion/react';
 import { HiEye, HiEyeOff } from 'react-icons/all';
-import { AreaNode, GoalNode, KeyResultNode } from 'features/graph/ui/Node';
+import { AreaNode, GoalNode, FocusableNode } from 'features/graph/ui/Node';
 import { Arrow } from 'features/graph/ui/Arrow';
 import * as React from 'react';
 
@@ -82,7 +82,7 @@ export const DailyGraph = ({ graph: graphData }: WithGraph) => {
         </div>
         <div css={column}>
           {keyResults.map((keyResult) => (
-            <KeyResultNode
+            <FocusableNode
               key={keyResult.id}
               node={keyResult}
               noteType={graph.type}

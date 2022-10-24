@@ -19,7 +19,8 @@ import {
 import { notNull } from 'common/utilities';
 import { DateTime } from 'luxon';
 
-const nodeComparator = (a: INode<any>, b: INode<any>) => b.order - a.order;
+const nodeComparator = (a: INode<unknown>, b: INode<unknown>) =>
+  b.order - a.order;
 
 const fetchData = (api: DataviewApi, filePath: string) => {
   const noteFile = api.page(filePath) as DataViewPage;
@@ -30,7 +31,7 @@ const fetchData = (api: DataviewApi, filePath: string) => {
   let noteType: NoteDateKind | null = null;
   const dailyDate = noteFile.file.day;
   let noteDay: DateTime | null = null;
-  if (dailyDate) {
+  if (dailyDate?.isValid) {
     noteDay = dailyDate;
     noteType = 'daily';
   } else {
@@ -38,7 +39,7 @@ const fetchData = (api: DataviewApi, filePath: string) => {
       noteFile.file.name,
       WEEK_FORMAT
     );
-    if (weekDay) {
+    if (weekDay.isValid) {
       noteDay = weekDay;
       noteType = 'weekly';
     } else {
@@ -46,7 +47,7 @@ const fetchData = (api: DataviewApi, filePath: string) => {
         noteFile.file.name,
         MONTH_FORMAT
       );
-      if (monthDate) {
+      if (monthDate.isValid) {
         noteDay = monthDate;
         noteType = 'monthly';
       }
@@ -58,9 +59,11 @@ const fetchData = (api: DataviewApi, filePath: string) => {
     return null;
   }
 
-  const currentQ = noteDay.startOf('week').toFormat("kkkk-'Q'q");
-  const currentMonth = noteDay.startOf('week').toFormat(MONTH_FORMAT);
-  const currentWeek = noteDay.startOf('week').toFormat(WEEK_FORMAT);
+  const unit = noteType === 'monthly' ? 'month' : 'week';
+
+  const currentQ = noteDay.startOf(unit).toFormat("yyyy-'Q'q");
+  const currentMonth = noteDay.startOf(unit).toFormat(MONTH_FORMAT);
+  const currentWeek = noteDay.startOf(unit).toFormat(WEEK_FORMAT);
 
   const areas = (
     api.pages(
@@ -68,9 +71,12 @@ const fetchData = (api: DataviewApi, filePath: string) => {
     ) as DataArray<DataViewPage>
   ).filter((area) => isFocused(area, currentQ, api) && !isComplete(area));
 
-  const goals = (
-    api.pages('"💿 Databases/🚀 Goals"') as DataArray<DataViewPage>
-  ).filter((goal) => isFocused(goal, currentMonth, api) && !isComplete(goal));
+  let goals = api.pages('"💿 Databases/🚀 Goals"') as DataArray<DataViewPage>;
+  if (noteType !== 'monthly') {
+    goals = goals.filter(
+      (goal) => isFocused(goal, currentMonth, api) && !isComplete(goal)
+    );
+  }
 
   let goalPaths: string[] = [];
   if (noteType === 'weekly') {
@@ -121,6 +127,7 @@ export const getData = (api: DataviewApi, filePath: string): IGraph | null => {
     })),
     goals: [],
     keyResults: [],
+    date: DateTime.now(),
     type: noteType,
   };
 
@@ -263,7 +270,40 @@ export const filterGraphByKeyResult = (
   return result;
 };
 
-export const processWeeklyData = (graph: IGraph): IGraph => {
+export const filterGraphByGoals = (
+  graph: IGraph,
+  findFunc: (goal: IGoalNode) => boolean
+): IGraph => {
+  const result: IGraph = {
+    areas: [],
+    goals: [],
+    keyResults: [],
+    type: graph.type,
+    date: graph.date,
+  };
+
+  const includedGoals: string[] = [];
+  for (const goal of graph.goals) {
+    const found = findFunc(goal);
+    if (found) {
+      includedGoals.push(goal.id);
+      result.goals.push(goal);
+    }
+  }
+
+  for (const area of graph.areas) {
+    const isIncluded = includedGoals.find(
+      (goalId) => !!area.children.find((goal) => goal.id === goalId)
+    );
+    if (isIncluded) {
+      result.areas.push(area);
+    }
+  }
+
+  return result;
+};
+
+export const filterOutDuplicateGoals = (graph: IGraph): IGraph => {
   const seenGoalIds: string[] = [];
 
   graph.areas.forEach((area) => {

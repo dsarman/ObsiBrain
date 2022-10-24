@@ -1,17 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import * as React from 'react';
-import { IKeyResultNode, WithGraph } from 'features/graph/graphTypes';
 import { css } from '@emotion/react';
-import { AreaNode, GoalNode, FocusableNode } from 'features/graph/ui/Node';
+import { IGoalNode, WithGraph } from 'features/graph/graphTypes';
+import { AreaNode, FocusableNode } from 'features/graph/ui/Node';
 import { Arrow } from 'features/graph/ui/Arrow';
+import { HiEye, HiEyeOff } from 'react-icons/all';
+import { isFocused as isPageFocused } from 'common/dataviewUtils';
 import {
-  filterGraphByKeyResult,
+  filterGraphByGoals,
   filterOutDuplicateGoals,
 } from 'features/graph/graphData';
-import { HiEye, HiEyeOff } from 'react-icons/all';
-import { useAtomValue } from 'jotai';
 import { dvApiAtom, markdownContextAtom } from 'common/state';
-import { isFocused as isPageFocused } from 'common/dataviewUtils';
+import { useAtomValue } from 'jotai';
 import { useXarrow } from 'react-xarrows';
 
 const row = css({
@@ -20,16 +20,16 @@ const row = css({
   alignItems: 'center',
 });
 
+const column = css({
+  display: 'flex',
+  flexDirection: 'column',
+});
+
 const secondRow = css({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
   flex: 2,
-});
-
-const column = css({
-  display: 'flex',
-  flexDirection: 'column',
 });
 
 const secondColumn = css({
@@ -42,26 +42,26 @@ const button = css({
   right: 35,
 });
 
-export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
+export const MonthlyGraph = ({ graph: rawData }: WithGraph) => {
   const updateXarrows = useXarrow();
   const graphData = filterOutDuplicateGoals(rawData);
   const [onlyFocused, setOnlyFocused] = React.useState(false);
   const markdownContext = useAtomValue(markdownContextAtom);
   const dvApi = useAtomValue(dvApiAtom);
 
-  const isFocused: (keyResult: IKeyResultNode) => boolean = React.useCallback(
-    (keyResult) => {
+  const isFocused: (keyResult: IGoalNode) => boolean = React.useCallback(
+    (goalNode) => {
       if (!dvApi) return false;
       const namedMatch = markdownContext?.sourcePath.match(/.+\/(.+).md$/);
       if (namedMatch)
-        return isPageFocused(keyResult.filePath, namedMatch[1], dvApi);
+        return isPageFocused(goalNode.filePath, namedMatch[1], dvApi);
       return false;
     },
     [dvApi, markdownContext?.sourcePath]
   );
 
   const graph = onlyFocused
-    ? filterGraphByKeyResult(graphData, isFocused)
+    ? filterGraphByGoals(graphData, isFocused)
     : graphData;
 
   return (
@@ -81,8 +81,9 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
             <AreaNode node={area} />
             <div css={secondColumn}>
               {graph.goals
-                .filter((goal) =>
-                  area.children.map((goal) => goal.id).includes(goal.id)
+                .filter(
+                  (graphGoal) =>
+                    !!area.children.find((goal) => goal.id === graphGoal.id)
                 )
                 .map((goal) => {
                   return (
@@ -90,29 +91,7 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
                       <Arrow parentId={area.id} childId={goal.id} />
                       {goal.displayParentId === area.id && (
                         <>
-                          <GoalNode node={goal} />
-                          <div css={column}>
-                            {graph.keyResults
-                              .filter((keyResult) =>
-                                goal.children
-                                  .map((goal) => goal.id)
-                                  .includes(keyResult.id)
-                              )
-                              .map((keyResult) => {
-                                return (
-                                  <div key={keyResult.id}>
-                                    <FocusableNode
-                                      node={keyResult}
-                                      noteType={graph.type}
-                                    />
-                                    <Arrow
-                                      parentId={goal.id}
-                                      childId={keyResult.id}
-                                    />
-                                  </div>
-                                );
-                              })}
-                          </div>
+                          <FocusableNode node={goal} />
                         </>
                       )}
                     </div>
