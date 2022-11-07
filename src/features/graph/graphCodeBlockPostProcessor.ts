@@ -14,5 +14,5 @@ export const graphCodeBlockPostProcessor = (
     return;
   }
 
-  ctx.addChild(new ReactRenderChild(el, api, ctx));
+  ctx.addChild(new ReactRenderChild(source, el, api, ctx));
 };

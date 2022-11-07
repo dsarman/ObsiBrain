@@ -11,3 +11,4 @@ export const dvApiAtom = atom<DataviewApi | undefined>(undefined);
 export const markdownContextAtom = atom<MarkdownContext | undefined>(undefined);
 export const graphAtom = atom<IGraph | undefined>(undefined);
 export const onlyTodayAtom = atom<boolean>(false);
+export const sourceAtom = atom<string>('defaultSource');

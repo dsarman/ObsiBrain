@@ -2,8 +2,11 @@
 import * as React from 'react';
 import { css } from '@emotion/react';
 import { IGoalNode, WithGraph } from 'features/graph/graphTypes';
-import { AreaNode, FocusableNode } from 'features/graph/ui/Node';
-import { Arrow } from 'features/graph/ui/Arrow';
+import {
+  AreaNode,
+  FocusableNode,
+} from 'features/graph/ui/graphs/components/Node';
+import { Arrow } from 'features/graph/ui/graphs/components/Arrow';
 import { HiEye, HiEyeOff } from 'react-icons/all';
 import { isFocused as isPageFocused } from 'common/dataviewUtils';
 import {

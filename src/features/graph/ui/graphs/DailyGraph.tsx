@@ -6,9 +6,14 @@ import { onlyTodayAtom } from 'common/state';
 import { filterGraphByKeyResult } from 'features/graph/graphData';
 import { css } from '@emotion/react';
 import { HiEye, HiEyeOff } from 'react-icons/all';
-import { AreaNode, GoalNode, FocusableNode } from 'features/graph/ui/Node';
-import { Arrow } from 'features/graph/ui/Arrow';
+import {
+  AreaNode,
+  GoalNode,
+  FocusableNode,
+} from 'features/graph/ui/graphs/components/Node';
+import { Arrow } from 'features/graph/ui/graphs/components/Arrow';
 import * as React from 'react';
+import { Task } from 'features/graph/ui/graphs/components/Task';
 
 const container = css({
   marginTop: 10,
@@ -90,6 +95,7 @@ export const DailyGraph = ({ graph: graphData }: WithGraph) => {
           ))}
         </div>
       </div>
+      <Task />
     </>
   );
 };

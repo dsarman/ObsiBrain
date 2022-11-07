@@ -71,11 +71,11 @@ const fetchData = (api: DataviewApi, filePath: string) => {
     ) as DataArray<DataViewPage>
   ).filter((area) => isFocused(area, currentQ, api) && !isComplete(area));
 
-  let goals = api.pages('"💿 Databases/🚀 Goals"') as DataArray<DataViewPage>;
+  let goals = (
+    api.pages('"💿 Databases/🚀 Goals"') as DataArray<DataViewPage>
+  ).filter((goal) => !isComplete(goal));
   if (noteType !== 'monthly') {
-    goals = goals.filter(
-      (goal) => isFocused(goal, currentMonth, api) && !isComplete(goal)
-    );
+    goals = goals.filter((goal) => isFocused(goal, currentMonth, api));
   }
 
   let goalPaths: string[] = [];

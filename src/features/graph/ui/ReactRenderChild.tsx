@@ -12,13 +12,16 @@ export class ReactRenderChild extends MarkdownRenderChild {
   private readonly api: DataviewApi;
   private readonly context: MarkdownPostProcessorContext;
   private graph: IGraph | null = null;
+  private source: string;
 
   constructor(
+    source: string,
     containerEl: HTMLElement,
     api: DataviewApi,
     context: MarkdownPostProcessorContext
   ) {
     super(containerEl);
+    this.source = source;
     this.api = api;
     this.context = context;
   }
@@ -39,6 +42,7 @@ export class ReactRenderChild extends MarkdownRenderChild {
     this.root.render(
       <React.StrictMode>
         <GraphContainer
+          source={this.source}
           graph={this.graph}
           dvApi={this.api}
           markdownContext={this.context}

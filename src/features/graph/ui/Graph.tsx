@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useAtomValue } from 'jotai';
 import { graphAtom } from 'common/state';
-import { DailyGraph } from 'features/graph/ui/DailyGraph';
-import { WeeklyGraph } from 'features/graph/ui/WeeklyGraph';
-import { MonthlyGraph } from 'features/graph/ui/MonthlyGraph';
+import { DailyGraph } from 'features/graph/ui/graphs/DailyGraph';
+import { WeeklyGraph } from 'features/graph/ui/graphs/WeeklyGraph';
+import { MonthlyGraph } from 'features/graph/ui/graphs/MonthlyGraph';
 
 export const Graph = () => {
   const graphData = useAtomValue(graphAtom);

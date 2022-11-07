@@ -3,7 +3,7 @@ import {
   GoalNode as GoalNodeComponent,
   FocusableNode as KeyResultNodeComponent,
   Node,
-} from 'src/features/graph/ui/Node';
+} from 'features/graph/ui/graphs/components/Node';
 import { ComponentMeta } from '@storybook/react';
 import { areaNodeFake, goalNodeFake, keyResultNodeFake } from './fakes';
 import * as React from 'react';

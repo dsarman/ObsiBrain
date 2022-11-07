@@ -2,8 +2,12 @@
 import * as React from 'react';
 import { IKeyResultNode, WithGraph } from 'features/graph/graphTypes';
 import { css } from '@emotion/react';
-import { AreaNode, GoalNode, FocusableNode } from 'features/graph/ui/Node';
-import { Arrow } from 'features/graph/ui/Arrow';
+import {
+  AreaNode,
+  GoalNode,
+  FocusableNode,
+} from 'features/graph/ui/graphs/components/Node';
+import { Arrow } from 'features/graph/ui/graphs/components/Arrow';
 import {
   filterGraphByKeyResult,
   filterOutDuplicateGoals,
