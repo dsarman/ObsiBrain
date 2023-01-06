@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import * as React from 'react';
 import { css } from '@emotion/react';
-import { ObsidianLink } from 'features/cards/ObsidianLink';
+import { ObsidianLink } from 'common/components/ObsidianLink';
 import { INode, ITask, NoteDateKind } from 'features/graph/graphTypes';
 import { HiOutlineStar, HiStar } from 'react-icons/hi';
 import { useAtomValue } from 'jotai';
@@ -44,59 +44,64 @@ const link = css`
   }
 `;
 
-export const Node = ({ node, className, children, style }: Props) => {
-  const filteredChildren = node.children.filter((child) => {
-    if (!('completed' in child)) return true;
-    return !child.completed;
-  });
-  const hasIncomplete = filteredChildren.length > 0;
-  const isScheduled = filteredChildren.find((child) => {
-    if (!('scheduled' in child)) return true;
-    return child.scheduled;
-  });
+export const Node = React.forwardRef(
+  ({ node, className, children, style }: Props, ref) => {
+    const filteredChildren = node.children.filter((child) => {
+      if (!('completed' in child)) return true;
+      return !child.completed;
+    });
+    const hasIncomplete = filteredChildren.length > 0;
+    const isScheduled = filteredChildren.find((child) => {
+      if (!('scheduled' in child)) return true;
+      return child.scheduled;
+    });
 
-  let bgColor;
-  if (isScheduled) {
-    bgColor = 'var(--green)';
-  } else if (hasIncomplete) {
-    bgColor = 'var(--orange)';
-  } else {
-    bgColor = 'var(--red)';
-  }
+    let bgColor;
+    if (isScheduled) {
+      bgColor = 'var(--color-green)';
+    } else if (hasIncomplete) {
+      bgColor = 'var(--color-orange)';
+    } else {
+      bgColor = 'var(--color-red)';
+    }
 
-  return (
-    <div css={flex}>
-      <div id={node.id} css={wrapper}>
-        <div css={container} style={{ background: bgColor, ...(style ?? {}) }}>
-          <ObsidianLink
-            css={link}
-            className={className}
-            label={node.name}
-            filePath={node.filePath}
-          />
-          {children}
+    return (
+      <div css={flex}>
+        <div ref={ref} css={wrapper}>
+          <div
+            css={container}
+            style={{ background: bgColor, ...(style ?? {}) }}
+          >
+            <ObsidianLink
+              css={link}
+              className={className}
+              label={node.name}
+              filePath={node.filePath}
+            />
+            {children}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 const areaTitle = css({
   fontSize: 'larger',
   whiteSpace: 'nowrap',
 });
 
-export const AreaNode = (args: Props) => {
-  return <Node css={areaTitle} {...args} />;
-};
+export const AreaNode = React.forwardRef((args: Props, ref) => {
+  return <Node ref={ref} css={areaTitle} {...args} />;
+});
 
 const goalTitle = css({
   fontSize: 'large',
 });
 
-export const GoalNode = (args: Props) => {
-  return <Node css={goalTitle} {...args} />;
-};
+export const GoalNode = React.forwardRef((args: Props, ref) => {
+  return <Node ref={ref} css={goalTitle} {...args} />;
+});
 
 const icon = css({
   position: 'absolute',
@@ -111,13 +116,13 @@ const focusedBorder: React.CSSProperties = {
   borderStyle: 'solid',
 };
 
-export const FocusableNode = (args: Props) => {
+export const FocusableNode = React.forwardRef((args: Props, ref) => {
   const dvApi = useAtomValue(dvApiAtom);
   const { isFocused, onOutlineStarClick, onStarClick } = useFocused(args.node);
   if (!dvApi) return null;
 
   return (
-    <Node {...args} style={isFocused ? focusedBorder : undefined}>
+    <Node ref={ref} {...args} style={isFocused ? focusedBorder : undefined}>
       <div css={icon}>
         {isFocused ? (
           <HiStar onClick={onStarClick} />
@@ -127,4 +132,4 @@ export const FocusableNode = (args: Props) => {
       </div>
     </Node>
   );
-};
+});

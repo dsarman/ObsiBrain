@@ -1,19 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { IKeyResultNode, WithGraph } from 'features/graph/graphTypes';
 import { useAtom } from 'jotai';
-import { useXarrow } from 'react-xarrows';
 import { onlyTodayAtom } from 'common/state';
 import { filterGraphByKeyResult } from 'features/graph/graphData';
 import { css } from '@emotion/react';
 import { HiEye, HiEyeOff } from 'react-icons/all';
-import {
-  AreaNode,
-  GoalNode,
-  FocusableNode,
-} from 'features/graph/ui/graphs/components/Node';
-import { Arrow } from 'features/graph/ui/graphs/components/Arrow';
+import { AreaNode, FocusableNode, GoalNode } from 'features/graph/ui/graphs/components/Node';
 import * as React from 'react';
-import { Task } from 'features/graph/ui/graphs/components/Task';
+import { ArcherElement } from 'react-archer';
 
 const container = css({
   marginTop: 10,
@@ -36,9 +30,12 @@ const button = css({
 const filterToday = (keyResult: IKeyResultNode) =>
   !!keyResult.children.find((task) => task.isToday);
 
-export const DailyGraph = ({ graph: graphData }: WithGraph) => {
+export interface DailyGraphProps extends WithGraph {
+  onUpdate: () => void;
+}
+
+export const DailyGraph = ({ graph: graphData, onUpdate }: DailyGraphProps) => {
   const [onlyToday, setOnlyToday] = useAtom(onlyTodayAtom);
-  const updateXarrows = useXarrow();
 
   const graph = onlyToday
     ? filterGraphByKeyResult(graphData, filterToday)
@@ -51,7 +48,7 @@ export const DailyGraph = ({ graph: graphData }: WithGraph) => {
         css={button}
         onClick={() => {
           setOnlyToday((prev) => !prev);
-          updateXarrows();
+          onUpdate();
         }}
       >
         {onlyToday ? <HiEyeOff /> : <HiEye />}
@@ -59,43 +56,42 @@ export const DailyGraph = ({ graph: graphData }: WithGraph) => {
       <div css={container}>
         <div css={column}>
           {areas.map((area) => (
-            <div key={area.id}>
+            <ArcherElement
+              key={area.id}
+              id={area.id}
+              relations={area.children.map((child) => ({
+                targetId: child.id,
+                sourceAnchor: 'right',
+                targetAnchor: 'left',
+              }))}
+            >
               <AreaNode node={area} />
-              {area.children.map((child) => (
-                <Arrow
-                  key={`${area.id}-${child.id}`}
-                  parentId={area.id}
-                  childId={child.id}
-                />
-              ))}
-            </div>
+            </ArcherElement>
           ))}
         </div>
         <div css={column}>
           {goals.map((goal) => (
-            <div key={goal.id}>
+            <ArcherElement
+              key={goal.id}
+              id={goal.id}
+              relations={goal.children.map((child) => ({
+                targetId: child.id,
+                sourceAnchor: 'right',
+                targetAnchor: 'left',
+              }))}
+            >
               <GoalNode node={goal} />
-              {goal.children.map((child) => (
-                <Arrow
-                  key={`${goal.id}-${child.id}`}
-                  parentId={goal.id}
-                  childId={child.id}
-                />
-              ))}
-            </div>
+            </ArcherElement>
           ))}
         </div>
         <div css={column}>
           {keyResults.map((keyResult) => (
-            <FocusableNode
-              key={keyResult.id}
-              node={keyResult}
-              noteType={graph.type}
-            />
+            <ArcherElement key={keyResult.id} id={keyResult.id}>
+              <FocusableNode node={keyResult} noteType={graph.type} />
+            </ArcherElement>
           ))}
         </div>
       </div>
-      <Task />
     </>
   );
 };

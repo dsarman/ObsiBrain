@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import * as React from 'react';
-import { AreaPage, Page } from './cardTypes';
+import { AreaPage } from './cardTypes';
 import { css } from '@emotion/react';
 import { GoalCard } from './GoalCard';
-import { ObsidianLink } from './ObsidianLink';
+import { ObsidianLink } from 'common/components/ObsidianLink';
 
 interface Props {
   area: AreaPage;

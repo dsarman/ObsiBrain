@@ -1,7 +1,7 @@
 import { AreaPage, GoalPage, Page } from '../features/cards/CardTypes';
 import { faker } from '@faker-js/faker';
 import { capitalize, toInteger } from 'lodash';
-import { INode } from 'features/graph/graphTypes';
+import { INode, ITask } from 'features/graph/graphTypes';
 
 // Cards
 
@@ -25,7 +25,7 @@ export const areaFake = (): AreaPage => ({
 
 // Nodes
 
-export const keyResultNodeFake = (): INode => ({
+export const keyResultNodeFake = (): INode<ITask> => ({
   id: faker.random.numeric(20),
   name: `💎 ${capitalize(faker.hacker.phrase())}`,
   filePath: faker.system.filePath(),
@@ -33,7 +33,7 @@ export const keyResultNodeFake = (): INode => ({
   order: toInteger(faker.random.numeric()),
 });
 
-export const goalNodeFake = (): INode => ({
+export const goalNodeFake = (): INode<INode<ITask>> => ({
   id: faker.random.numeric(20),
   name: `🚀 ${capitalize(faker.hacker.verb())}`,
   filePath: faker.system.filePath(),
@@ -41,7 +41,7 @@ export const goalNodeFake = (): INode => ({
   order: toInteger(faker.random.numeric()),
 });
 
-export const areaNodeFake = (): INode => ({
+export const areaNodeFake = (): INode<INode<INode<ITask>>> => ({
   id: faker.random.numeric(20),
   name: `${capitalize(faker.word.adverb())} ${faker.word.adjective()}`,
   filePath: faker.system.filePath(),

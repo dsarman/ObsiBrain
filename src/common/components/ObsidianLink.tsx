@@ -11,8 +11,8 @@ export const ObsidianLink = ({ label, filePath, className }: Props) => (
     aria-label={filePath}
     data-href={filePath}
     href={filePath}
-    target="_blank"
-    rel="noopener"
+    target='_blank'
+    rel='noopener noreferrer'
     className={`internal-link${className ? ` ${className}` : ''}`}
   >
     {label}

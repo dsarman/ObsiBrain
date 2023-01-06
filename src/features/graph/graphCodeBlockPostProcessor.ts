@@ -7,7 +7,7 @@ export const graphCodeBlockPostProcessor = (
   source: string,
   el: HTMLElement,
   ctx: MarkdownPostProcessorContext
-): Promise<any> | void => {
+): Promise<never> | void => {
   const api = getAPI(app);
   if (!api) {
     console.error(sb('Could not load dataview api'));

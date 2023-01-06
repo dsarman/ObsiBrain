@@ -93,7 +93,6 @@ export const cardsCodeBlockPostProcessor =
     }
 
     const pages = getData(api, ctx.sourcePath);
-    console.log(pages);
 
     const root = createRoot(el);
     root.render(

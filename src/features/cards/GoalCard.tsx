@@ -3,7 +3,7 @@ import * as React from 'react';
 import { GoalPage } from './cardTypes';
 import { css } from '@emotion/react';
 import { KeyResultCard } from './KeyResultCard';
-import { ObsidianLink } from './ObsidianLink';
+import { ObsidianLink } from 'common/components/ObsidianLink';
 
 interface Props {
   goal: GoalPage;

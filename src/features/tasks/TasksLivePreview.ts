@@ -40,8 +40,8 @@ class TasksLivePreview implements PluginValue {
 
     event.preventDefault();
 
-    task.toggle().then((task) => {
-      const toggledString = task.line;
+    task.toggle().then((newTask) => {
+      const toggledString = newTask.line();
 
       const transaction = state.update({
         changes: {
@@ -52,7 +52,7 @@ class TasksLivePreview implements PluginValue {
       });
       this.view.dispatch(transaction);
 
-      const desiredCheckedStatus = task.checked;
+      const desiredCheckedStatus = task.getChecked().isChecked;
       setTimeout(() => {
         target.checked = desiredCheckedStatus;
       }, 1);
