@@ -1,6 +1,7 @@
 import { EditorView, PluginValue, ViewPlugin } from '@codemirror/view';
 import { Task } from 'features/tasks/Task';
 import { Vault } from 'obsidian';
+import { NEWLINE } from 'common/utilities';
 
 export const newTasksLivePreview = (vault: Vault) =>
   ViewPlugin.define((view) => new TasksLivePreview(view, vault));
@@ -41,7 +42,10 @@ class TasksLivePreview implements PluginValue {
     event.preventDefault();
 
     task.toggle().then((newTask) => {
-      const toggledString = newTask.line();
+      const toggledString =
+        task.getRecurring()?.logInPlace && task.getCheckedBlock().isChecked
+          ? `${newTask.line()}${NEWLINE}${task.line()}`
+          : newTask.line();
 
       const transaction = state.update({
         changes: {
@@ -52,7 +56,7 @@ class TasksLivePreview implements PluginValue {
       });
       this.view.dispatch(transaction);
 
-      const desiredCheckedStatus = task.getChecked().isChecked;
+      const desiredCheckedStatus = task.getCheckedBlock().isChecked;
       setTimeout(() => {
         target.checked = desiredCheckedStatus;
       }, 1);

@@ -6,7 +6,6 @@ import { useAtomValue } from 'jotai';
 import { dvApiAtom } from 'common/state';
 import { css } from '@emotion/react';
 import { TFile } from 'obsidian';
-import { NEWLINE } from 'common/utilities';
 import { BlockComponent } from 'features/dashboards/components/BlockComponent';
 
 interface Props {
@@ -30,7 +29,7 @@ export const Task = ({ task }: Props) => {
     return TaskObj.fromLine(
       line ?? `${task.data.checked ? '- [x] ' : '- [ ] '}${task.data.text}`,
       dvApi.app.vault,
-      task.data,
+      task.data
     );
   }, [dvApi, line, task.data.checked, task.data.text]);
 
@@ -40,12 +39,9 @@ export const Task = ({ task }: Props) => {
       const file = dvApi.app.vault.getAbstractFileByPath(task.data.path);
       if (file instanceof TFile && taskObj) {
         setIsChecked((prev) => !prev);
-        const contents = (await dvApi.app.vault.read(file)).split(NEWLINE);
         const newTask = await taskObj.toggle();
         const newLine = newTask.line();
         setLine(newLine);
-        contents[task.data.line] = newLine;
-        await dvApi.app.vault.modify(file, contents.join(NEWLINE));
       }
     };
 

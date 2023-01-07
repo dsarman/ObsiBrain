@@ -16,7 +16,7 @@ const getData = (api: DataviewApi, filePath: string): AreaPage[] => {
   }
   const noteDay = noteFile.file.day;
   if (!noteDay) {
-    console.log(sb(`File ${filePath} is not a day note.`));
+    console.error(sb(`File ${filePath} is not a day note.`));
     return [];
   }
 

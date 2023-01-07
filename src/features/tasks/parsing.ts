@@ -11,20 +11,20 @@ import { DAY_FORMAT } from 'common/dataviewUtils';
 import { Link, STask } from 'obsidian-dataview';
 import { TaskFields } from 'features/tasks/TaskFields';
 
-const TASK_PREFIX_PATTERN = /^-\s\[(.)\]\s/;
+const TASK_PREFIX_PATTERN = /^-\s\[(.)]\s/;
 
 export const parseBlocks = (line: string, task?: STask): Block[] => {
-  const result: Block[] = [];
   const regexp = TASK_PREFIX_PATTERN.exec(line);
 
   if (!regexp) throw new Error('Could not parse task checkbox');
   const wholeMatch = regexp[0];
   const valueMatch = regexp[1];
-
-  result.push({
-    kind: 'checkbox',
-    isChecked: valueMatch !== ' ',
-  });
+  const result: Block[] = [
+    {
+      kind: 'checkbox',
+      isChecked: valueMatch !== ' ',
+    },
+  ];
 
   let currentIndex = wholeMatch.length;
   while (currentIndex < line.length) {
@@ -38,7 +38,6 @@ export const parseBlocks = (line: string, task?: STask): Block[] => {
 
     const linkBlockData = getLink(line.slice(currentIndex));
     if (linkBlockData) {
-      console.log(task);
       const [linkBlock, linkLength] = linkBlockData;
       result.push(linkBlock);
       currentIndex += linkLength;
@@ -64,7 +63,7 @@ export const parseBlocks = (line: string, task?: STask): Block[] => {
     throw Error(
       `Could not parse line ${line}. Stuck at index ${currentIndex} from ${
         line.length
-      }, result ${JSON.stringify(result)}`,
+      }, result ${JSON.stringify(result)}`
     );
   }
 
@@ -92,7 +91,7 @@ const getLink = (text: string): [LinkBlock, number] | null => {
 const DV_FIELD_REGEX = /^\s*\[(.+?)::\s\[\[(.+?)]]]\s*/;
 const getParamLinkBlock = (
   text: string,
-  task?: STask,
+  task?: STask
 ): [DvLinkFieldBlock, number] | null => {
   const regex = DV_FIELD_REGEX.exec(text);
   if (!regex || !regex[2]) return null;
@@ -102,25 +101,25 @@ const getParamLinkBlock = (
     name === BlockParamNames.due
       ? 'due'
       : name === BlockParamNames.completedOn
-        ? 'completedOn'
-        : null;
+      ? 'completedOn'
+      : null;
 
   const file = (
     task
       ? kind === 'due'
         ? task[TaskFields.DUE]
         : kind === 'completedOn'
-          ? task[TaskFields.COMPLETED_ON]
-          : null
+        ? task[TaskFields.COMPLETED_ON]
+        : null
       : null
   ) as Link | null;
   const filePath = file ? file.path : undefined;
 
   return regex && regex[2] && kind
     ? [
-      { kind, date: DateTime.fromFormat(regex[2], DAY_FORMAT), filePath },
-      regex[0].length,
-    ]
+        { kind, date: DateTime.fromFormat(regex[2], DAY_FORMAT), filePath },
+        regex[0].length,
+      ]
     : null;
 };
 
@@ -140,8 +139,8 @@ const getParamTextBlock = (text: string): [RecurringBlock, number] | null => {
     valueRegex[2] === 'day'
       ? 'day'
       : valueRegex[2] === 'month'
-        ? 'month'
-        : null;
+      ? 'month'
+      : null;
   if (!period) return null;
 
   const number = valueRegex[1] ? Number(valueRegex[1]) : 1;

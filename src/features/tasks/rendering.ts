@@ -14,11 +14,11 @@ export const renderBlockToText = (block: Block): string => {
       return block.text;
     case 'completedOn':
     case 'due':
-      return `[${BlockParamNames.fromBlock(block)}:: [[${block.date.toFormat(
+      return ` [${BlockParamNames.fromBlock(block)}:: [[${block.date.toFormat(
         DAY_FORMAT
       )}]]]`;
     case 'recurring':
-      return `[${BlockParamNames.fromBlock(block)}:: ${recurringText(block)}]`;
+      return ` [${BlockParamNames.fromBlock(block)}:: ${recurringText(block)}]`;
   }
 };
 
