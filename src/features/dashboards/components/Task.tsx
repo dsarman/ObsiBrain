@@ -7,6 +7,7 @@ import { dvApiAtom } from 'common/state';
 import { css } from '@emotion/react';
 import { TFile } from 'obsidian';
 import { BlockComponent } from 'features/dashboards/components/BlockComponent';
+import { NEWLINE } from 'common/utilities';
 
 interface Props {
   task: ITask;
@@ -42,6 +43,9 @@ export const Task = ({ task }: Props) => {
         const newTask = await taskObj.toggle();
         const newLine = newTask.line();
         setLine(newLine);
+        const content = (await dvApi.app.vault.read(file)).split(NEWLINE);
+        content[task.data.line] = newLine;
+        await dvApi.app.vault.modify(file, content.join(NEWLINE));
       }
     };
 

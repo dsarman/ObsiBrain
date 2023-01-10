@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import * as React from 'react';
+import React from 'react';
 import { css } from '@emotion/react';
 import { ObsidianLink } from 'common/components/ObsidianLink';
 import { INode, ITask, NoteDateKind } from 'features/graph/graphTypes';

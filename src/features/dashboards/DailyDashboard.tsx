@@ -25,7 +25,7 @@ const useTodayTasks = (): ITaskGroup[] => {
   if (!dvApi || !markdownContext || !markdownContext.filename) return [];
   const tasks = dvApi.pages('"💿 Databases" or "Reviews"').file.tasks;
   const dueTasks = tasks.where((p) => {
-    if (p.link.path.contains('🔁')) return false;
+    //if (p.link.path.contains('🔁')) return false;
     const dueDateFromField = dvApi.date(p['🗓'] || p['📅'] || p.due);
     let dueDate;
     if (!dueDateFromField) {

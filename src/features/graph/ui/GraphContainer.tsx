@@ -14,6 +14,8 @@ import { Component, MarkdownPostProcessorContext } from 'obsidian';
 import { ArcherContainer } from 'react-archer';
 import { ArcherContainerHandle } from 'react-archer/lib/ArcherContainer/ArcherContainer.types';
 import { Xwrapper } from 'react-xarrows';
+import { IconContext } from 'react-icons';
+import { style } from 'd3';
 
 interface Props {
   source: string;
@@ -72,7 +74,11 @@ export const GraphContainer = ({
   return (
     <Xwrapper>
       <ArcherContainer ref={archerRef}>
-        <Graph onUpdate={onUpdate} />
+        <IconContext.Provider
+          value={{ style: { verticalAlign: 'middle', margin: 4 } }}
+        >
+          <Graph onUpdate={onUpdate} />
+        </IconContext.Provider>
       </ArcherContainer>
     </Xwrapper>
   );

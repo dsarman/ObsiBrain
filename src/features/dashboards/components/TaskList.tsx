@@ -1,33 +1,15 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { ITask } from 'features/graph/graphTypes';
-import { Task } from 'features/dashboards/components/Task';
-import { ObsidianLink } from 'common/components/ObsidianLink';
-import { css } from '@emotion/react';
 import { ITaskGroup } from 'features/dashboards/DailyDashboard';
+import { DndContext } from '@dnd-kit/core';
+import { TaskContainer } from 'features/dashboards/components/TaskContainer';
+import { TaskGroup } from 'features/dashboards/components/TaskGroup';
+import { SortableContext } from '@dnd-kit/sortable';
 
 export interface TaskListProps {
   tasks: ITaskGroup[];
 }
-
-const taskGroup = css({
-  flexDirection: 'column',
-  display: 'flex',
-  paddingBlockEnd: 20,
-});
-
-const tasksContainer = css({
-  backgroundColor: 'rgba(0,0,0,0.2)',
-  padding: 20,
-  borderRadius: 4,
-});
-
-const headerLink = css({
-  fontFamily: 'var(--h4-font)',
-  fontVariant: 'var(--h4-variant)',
-  fontStyle: 'var(--h4-style)',
-  fontSize: 'var(--h4-size)',
-});
 
 export const TaskList = ({ tasks }: TaskListProps) => {
   const groupedTasks = useMemo(() => {
@@ -39,30 +21,34 @@ export const TaskList = ({ tasks }: TaskListProps) => {
       result.set(taskData.parent.file.path, alreadyGrouped);
     }
 
-    return result;
+    return Array.from(result).map(([key, value]) => ({
+      id: key,
+      value,
+    }));
   }, [tasks]);
 
   return (
-    <div css={tasksContainer}>
-      {Array.from(groupedTasks).map(([parentTaskFilePath, taskList]) => {
-        const parentTask = tasks.find(
-          (task) => task.parent.file.path === parentTaskFilePath,
-        )?.parent;
-        if (!parentTask) return null;
+    <DndContext>
+      <TaskContainer>
+        <SortableContext items={groupedTasks}>
+          {groupedTasks.map(
+            ({ id: parentTaskFilePath, value: taskList }, index) => {
+              const parentTask = tasks.find(
+                (task) => task.parent.file.path === parentTaskFilePath
+              )?.parent;
+              if (!parentTask) return null;
 
-        return (
-          <div key={parentTask.file.path} css={taskGroup}>
-            <ObsidianLink
-              label={parentTask.file.name}
-              filePath={parentTask.file.path}
-              css={headerLink}
-            />
-            {taskList.map((task) => (
-              <Task task={task} key={task.data.blockId} />
-            ))}
-          </div>
-        );
-      })}
-    </div>
+              return (
+                <TaskGroup
+                  key={parentTask.file.path}
+                  parentTask={parentTask}
+                  tasks={taskList}
+                />
+              );
+            }
+          )}
+        </SortableContext>
+      </TaskContainer>
+    </DndContext>
   );
 };
