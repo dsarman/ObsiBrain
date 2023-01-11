@@ -70,6 +70,8 @@ export class Task {
   public async toggle(): Promise<Task> {
     if (!this.checkboxBlock.isChecked && this.recurrence) {
       const nextDueDate = this.getNextDueDate();
+      console.log('Next due date');
+      console.log(nextDueDate);
       const existingProps = this.toProps();
       if (!nextDueDate) return this;
       const newTask = new Task({
@@ -77,6 +79,8 @@ export class Task {
         blocks: existingProps.blocks.map((block) => {
           if (block.kind !== 'due') return { ...block };
           const newDueBlock: DueBlock = { ...block, date: nextDueDate };
+          console.log('New due block');
+          console.log(newDueBlock);
           return newDueBlock;
         }),
       });
@@ -110,6 +114,8 @@ export class Task {
           this.vault.modify(logFile, content);
         }
       }
+      console.log('New task is');
+      console.log(newTask);
       return newTask;
     }
 
@@ -156,14 +162,34 @@ export class Task {
     const startDate = this.recurrence.isStrict ? this.due?.date : now;
     if (!startDate) return null;
 
+    let difference = 0;
+    if (this.recurrence.isStrict) {
+      switch (this.recurrence.period) {
+        case 'day':
+          difference = Math.floor(Math.abs(startDate.diffNow('days').days));
+          break;
+        case 'month':
+          difference = Math.floor(Math.abs(startDate.diffNow('days').months));
+          break;
+      }
+    }
+
+    const recurrenceMultiplier = this.recurrence.isStrict
+      ? Math.floor(difference / this.recurrence.number) + 1
+      : 1;
+
     switch (this.recurrence.period) {
       case 'day':
         return startDate.plus(
-          Duration.fromObject({ days: this.recurrence.number })
+          Duration.fromObject({
+            days: this.recurrence.number * recurrenceMultiplier,
+          })
         );
       case 'month':
         return startDate.plus(
-          Duration.fromObject({ months: this.recurrence.number })
+          Duration.fromObject({
+            months: this.recurrence.number * recurrenceMultiplier,
+          })
         );
     }
   }

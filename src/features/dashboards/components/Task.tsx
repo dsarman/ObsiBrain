@@ -22,7 +22,6 @@ const taskContainer = css({
 export const Task = ({ task }: Props) => {
   const dvApi = useAtomValue(dvApiAtom);
 
-  const [isChecked, setIsChecked] = useState(task.data.checked);
   const [line, setLine] = useState<string | null>(null);
 
   const taskObj = useMemo(() => {
@@ -39,7 +38,6 @@ export const Task = ({ task }: Props) => {
       if (!dvApi) return;
       const file = dvApi.app.vault.getAbstractFileByPath(task.data.path);
       if (file instanceof TFile && taskObj) {
-        setIsChecked((prev) => !prev);
         const newTask = await taskObj.toggle();
         const newLine = newTask.line();
         setLine(newLine);
