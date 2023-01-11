@@ -56,7 +56,7 @@ class TasksLivePreview implements PluginValue {
       });
       this.view.dispatch(transaction);
 
-      const desiredCheckedStatus = task.getCheckedBlock().isChecked;
+      const desiredCheckedStatus = newTask.getCheckedBlock().isChecked;
       setTimeout(() => {
         target.checked = desiredCheckedStatus;
       }, 1);
