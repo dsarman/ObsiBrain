@@ -40,7 +40,7 @@ export const Task = ({ task }: Props) => {
       if (file instanceof TFile && taskObj) {
         const newTask = await taskObj.toggle();
         const newLine = newTask.line();
-        setLine(newLine);
+        setLine(taskObj.line());
         const content = (await dvApi.app.vault.read(file)).split(NEWLINE);
         content[task.data.line] = newLine;
         await dvApi.app.vault.modify(file, content.join(NEWLINE));

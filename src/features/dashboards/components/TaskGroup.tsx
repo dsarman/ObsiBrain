@@ -62,7 +62,10 @@ export const TaskGroup = ({ parentTask, tasks }: TaskGroupProps) => {
       </div>
 
       {tasks.map((task) => (
-        <Task task={task} key={task.data.blockId} />
+        <Task
+          task={task}
+          key={`${task.data.blockId}-${task.data.path}-${task.data.line}`}
+        />
       ))}
     </div>
   );
