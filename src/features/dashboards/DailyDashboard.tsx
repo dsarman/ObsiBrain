@@ -10,6 +10,7 @@ import { css } from '@emotion/react';
 import { ITask } from 'features/graph/graphTypes';
 import { DataViewPage } from 'common/types';
 import { DataArray, STask } from 'obsidian-dataview';
+import { useMemo } from 'react';
 
 type DailyDashboardProps = DailyGraphProps;
 
@@ -25,7 +26,6 @@ const useTodayTasks = (): ITaskGroup[] => {
   if (!dvApi || !markdownContext || !markdownContext.filename) return [];
   const tasks = dvApi.pages('"💿 Databases" or "Reviews"').file.tasks;
   const dueTasks = tasks.where((p) => {
-    //if (p.link.path.contains('🔁')) return false;
     const dueDateFromField = dvApi.date(p['🗓'] || p['📅'] || p.due);
     let dueDate;
     if (!dueDateFromField) {
@@ -43,7 +43,7 @@ const useTodayTasks = (): ITaskGroup[] => {
     } else {
       isDue = dueDateFromField <= nowDate;
     }
-    return !p.completed && isDue;
+    return isDue;
   }) as DataArray<STask>;
 
   return dueTasks
@@ -51,6 +51,7 @@ const useTodayTasks = (): ITaskGroup[] => {
       task: { data: task, completed: task.completed, isToday: true },
       parent: dvApi.page(task.link.path) as DataViewPage,
     }))
+    .sort((groupedTask) => groupedTask.parent?.order ?? 0)
     .array();
 };
 
@@ -60,13 +61,16 @@ const graphContainer = css({
 
 export const DailyDashboard = ({ graph, onUpdate }: DailyDashboardProps) => {
   const tasks = useTodayTasks();
+  const incompleteTasks = useMemo(() => {
+    return tasks.filter((taskGroup) => !taskGroup.task.data.checked);
+  }, [tasks]);
 
   return (
     <div>
       <div css={graphContainer}>
         <DailyGraph onUpdate={onUpdate} graph={graph} />
       </div>
-      <TaskList tasks={tasks} />
+      <TaskList tasks={incompleteTasks} />
     </div>
   );
 };

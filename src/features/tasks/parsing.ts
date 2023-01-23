@@ -11,18 +11,22 @@ import { DAY_FORMAT } from 'common/dataviewUtils';
 import { Link, STask } from 'obsidian-dataview';
 import { TaskFields } from 'features/tasks/TaskFields';
 
-const TASK_PREFIX_PATTERN = /^-\s\[(.)]\s/;
+const TASK_PREFIX_PATTERN = /^(\s*)-\s\[(.)]\s/;
 
 export const parseBlocks = (line: string, task?: STask): Block[] => {
   const regexp = TASK_PREFIX_PATTERN.exec(line);
 
   if (!regexp) throw new Error('Could not parse task checkbox');
   const wholeMatch = regexp[0];
-  const valueMatch = regexp[1];
+  const whitespaceMatch = regexp[1];
+  const valueMatch = regexp[2];
+  console.log('Taskbox match is');
+  console.log(regexp);
   const result: Block[] = [
     {
       kind: 'checkbox',
       isChecked: valueMatch !== ' ',
+      startChars: whitespaceMatch.length,
     },
   ];
 

@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 export interface CheckboxBlock {
   kind: 'checkbox';
   isChecked: boolean;
+  startChars: number;
 }
 
 export interface TextBlock {

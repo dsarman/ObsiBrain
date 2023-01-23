@@ -8,7 +8,10 @@ import { DAY_FORMAT } from 'common/dataviewUtils';
 export const renderBlockToText = (block: Block): string => {
   switch (block.kind) {
     case 'checkbox':
-      return `- [${block.isChecked ? 'x' : ' '}]`;
+      console.log(block);
+      return `${'\t'.repeat(block.startChars)}- [${
+        block.isChecked ? 'x' : ' '
+      }]`;
     case 'text':
     case 'link':
       return block.text;
