@@ -9,6 +9,7 @@ import {
 import { useAtomValue } from 'jotai';
 import { dvApiAtom } from 'common/state';
 import { DataViewPage } from 'common/types';
+import { css } from '@emotion/react';
 
 interface BlockComponentProps {
   block: Block;
@@ -19,8 +20,6 @@ export const BlockComponent = ({
   block,
   onCheckboxChange,
 }: BlockComponentProps) => {
-  const dvApi = useAtomValue(dvApiAtom);
-
   switch (block.kind) {
     case 'checkbox':
       return (
@@ -36,8 +35,14 @@ export const BlockComponent = ({
     case 'recurring':
       return <DvRecurrenceField field={block} />;
     case 'completedOn':
-    case 'due':
       return <DvLinkField field={block} filePath={block.filePath ?? ''} />;
+    case 'due':
+      return (
+        <>
+          <DvLinkField field={block} filePath={block.filePath ?? ''} />
+          <span css={css({ color: 'red', fontSize: 6 })}>{`●`}</span>
+        </>
+      );
     default:
       console.error(
         'Could not render unknown block kind ' + JSON.stringify(block)

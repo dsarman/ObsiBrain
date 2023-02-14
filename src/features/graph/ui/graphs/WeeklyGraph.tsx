@@ -7,7 +7,6 @@ import {
   GoalNode,
   FocusableNode,
 } from 'features/graph/ui/graphs/components/Node';
-import { Arrow } from 'features/graph/ui/graphs/components/Arrow';
 import {
   filterGraphByKeyResult,
   filterOutDuplicateGoals,
@@ -16,7 +15,7 @@ import { HiEye, HiEyeOff } from 'react-icons/all';
 import { useAtomValue } from 'jotai';
 import { dvApiAtom, markdownContextAtom } from 'common/state';
 import { isFocused as isPageFocused } from 'common/dataviewUtils';
-import { useXarrow } from 'react-xarrows';
+import { ArcherElement } from 'react-archer';
 
 const row = css({
   display: 'flex',
@@ -47,7 +46,6 @@ const button = css({
 });
 
 export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
-  const updateXarrows = useXarrow();
   const graphData = filterOutDuplicateGoals(rawData);
   const [onlyFocused, setOnlyFocused] = React.useState(false);
   const markdownContext = useAtomValue(markdownContextAtom);
@@ -74,7 +72,6 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
         css={button}
         onClick={() => {
           setOnlyFocused((prev) => !prev);
-          updateXarrows();
         }}
       >
         {onlyFocused ? <HiEyeOff /> : <HiEye />}
@@ -82,7 +79,17 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
       <div css={column}>
         {graph.areas.map((area) => (
           <div key={area.id} css={row}>
-            <AreaNode node={area} />
+            <ArcherElement
+              key={area.id}
+              id={area.id}
+              relations={area.children.map((child) => ({
+                targetId: child.id,
+                sourceAnchor: 'right',
+                targetAnchor: 'left',
+              }))}
+            >
+              <AreaNode node={area} />
+            </ArcherElement>
             <div css={secondColumn}>
               {graph.goals
                 .filter((goal) =>
@@ -91,10 +98,18 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
                 .map((goal) => {
                   return (
                     <div key={goal.id} css={secondRow}>
-                      <Arrow parentId={area.id} childId={goal.id} />
                       {goal.displayParentId === area.id && (
                         <>
-                          <GoalNode node={goal} />
+                          <ArcherElement
+                            id={goal.id}
+                            relations={goal.children.map((child) => ({
+                              targetId: child.id,
+                              sourceAnchor: 'right',
+                              targetAnchor: 'left',
+                            }))}
+                          >
+                            <GoalNode node={goal} />
+                          </ArcherElement>
                           <div css={column}>
                             {graph.keyResults
                               .filter((keyResult) =>
@@ -104,16 +119,15 @@ export const WeeklyGraph = ({ graph: rawData }: WithGraph) => {
                               )
                               .map((keyResult) => {
                                 return (
-                                  <div key={keyResult.id}>
+                                  <ArcherElement
+                                    key={keyResult.id}
+                                    id={keyResult.id}
+                                  >
                                     <FocusableNode
                                       node={keyResult}
                                       noteType={graph.type}
                                     />
-                                    <Arrow
-                                      parentId={goal.id}
-                                      childId={keyResult.id}
-                                    />
-                                  </div>
+                                  </ArcherElement>
                                 );
                               })}
                           </div>

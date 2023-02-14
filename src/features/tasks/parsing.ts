@@ -20,8 +20,6 @@ export const parseBlocks = (line: string, task?: STask): Block[] => {
   const wholeMatch = regexp[0];
   const whitespaceMatch = regexp[1];
   const valueMatch = regexp[2];
-  console.log('Taskbox match is');
-  console.log(regexp);
   const result: Block[] = [
     {
       kind: 'checkbox',
