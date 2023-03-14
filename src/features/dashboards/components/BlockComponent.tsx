@@ -10,6 +10,7 @@ import { useAtomValue } from 'jotai';
 import { dvApiAtom } from 'common/state';
 import { DataViewPage } from 'common/types';
 import { css } from '@emotion/react';
+import { DateTime } from 'luxon';
 
 interface BlockComponentProps {
   block: Block;
@@ -40,7 +41,9 @@ export const BlockComponent = ({
       return (
         <>
           <DvLinkField field={block} filePath={block.filePath ?? ''} />
-          <span css={css({ color: 'red', fontSize: 6 })}>{`●`}</span>
+          {block.date < DateTime.now() && (
+            <span css={css({ color: 'red', fontSize: 6 })}>{`●`}</span>
+          )}
         </>
       );
     default:
